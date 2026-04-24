@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <title>天津因科鹰眼在线监控系统</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.3.0/dist/echarts.min.js"></script>
+    <script language="javascript">
+        // 模拟Tools对象
+        var Tools = {
+            init: function(options) {
+                console.log('Tools initialized');
+            }
+        };
+        Tools.init({"antiCsrfToken":false,"doServletPath":"/do","devMode":"false","contextPath":"","officePreview":true,"useParamEncrypt":true,"rsaPublicKey":"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDaiEoUWno/ZAd/PwEo8CeblhCfIS0bHK5kKWGLcOIN9AVEu5nDbmj7/6dkuVkvl3lCUGzu1qDOBWGnDGRwKAcw80MahzFHwsD81sVOeLshc3Qk3ZAup1zD0ZsOTWCnEAdKuh/l3bYYNUVJkXm8qb1HU97kzf5FWmgL6eF8+uV8iwIDAQAB"});
+        var orgCode='C0104';
+    </script>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='45' viewBox='0 0 120 45'%3E%3Cdefs%3E%3ClinearGradient id='grad1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%230056b3;stop-opacity:1'/%3E%3Cstop offset='100%25' style='stop-color:%23007bff;stop-opacity:1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='0' y='0' width='120' height='45' rx='8' fill='url(%23grad1)'/%3E%3Ctext x='15' y='30' font-family='%22Segoe%20UI%22,%20Arial,%20sans-serif' font-size='22' font-weight='700' fill='white'%3EINCOtech%3C/text%3E%3C/svg%3E" alt="INCOtech Logo">
+        </div>
+        <div class="biaoti">
+            <p>天津因科鹰眼在线监控系统</p>
+        </div>
+        <div class="search">
+            <input type="text" name="searchKeyword" id="searchKeyword" placeholder="请输入关键词" value="">
+            <button id="searchBtn">检索</button>
+        </div>
+    </div>
+    <div class="container">
+        <div class="con_left">
+            <div class="left_top">
+                <div class="left_top1">
+                    <h1>监控列表</h1>
+                </div>
+                <div class="left_top3">
+                    <button id="backToMain" style="padding: 6px 16px; background: linear-gradient(135deg, #0056b3 0%, #007bff 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.3s ease;">返回首页</button>
+                </div>
+                <div class="left_top2">
+                    <div class="top2_tt">
+                        <p>更多选项</p>
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E" alt="Arrow">
+                    </div>
+                    <div class="top2_bb">
+                        <div class="bb1">
+                            <input type="checkbox" value="LOC_CODE">
+                            <p>监控管件编号</p>
+                        </div>
+                        <div class="bb1">
+                            <input type="checkbox" value="ALLOW_MIN_BH">
+                            <p>最小允许壁厚</p>
+                        </div>
+                        <div class="bb1">
+                            <input type="checkbox" value="TY_DATE">
+                            <p>投用年限</p>
+                        </div>
+                        <div class="bb1">
+                            <input type="checkbox" value="JK_START_DATE">
+                            <p>起始监控日期</p>
+                        </div>
+                        <div class="bb1">
+                            <input type="checkbox" value="JK_DAYS">
+                            <p>累计监控天数</p>
+                        </div>
+                        <div class="bb1">
+                            <input type="checkbox" value="LJBJ">
+                            <p>累计报警时间</p>
+                        </div>
+                        <div class="bb1">
+                            <input type="checkbox" value="WARN_DEALED">
+                            <p>报警是否处理</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="left_list">
+                <table class="list_table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px">序号</th>
+                            <th style="width: 100px">是否报警及报警等级</th>
+                            <th style="width: 80px">所属公司</th>
+                            <th style="width: 220px">装置</th>
+                            <th style="width: 150px">监控位置</th>
+                            <th style="width: 120px">数据采集日期</th>
+                            <th class="sort-header" style="width: 150px">
+                                <p colcode="MIN_BH">最小壁厚值(mm)</p>
+                                <div class="dir">
+                                    <span class="icon sheng"></span>
+                                    <span class="icon jiang"></span>
+                                </div>
+                            </th>
+                            <th class="sort-header" style="width: 150px">
+                                <p colcode="FS_SPPED_AVG">腐蚀速率(mm/Y)</p>
+                                <div class="dir">
+                                    <span class="icon sheng"></span>
+                                    <span class="icon jiang"></span>
+                                </div>
+                            </th>
+                            <th class="sort-header" style="width: 120px">
+                                <p colcode="JB_RATE">最大减薄率</p>
+                                <div class="dir">
+                                    <span class="icon sheng"></span>
+                                    <span class="icon jiang"></span>
+                                </div>
+                            </th>
+                            <th style="width: 70px">剩余寿命(Y)</th>
+                            <th style="width: 70px">工作状态</th>
+                            <th class="ext-header hidden" colcode="LOC_CODE">监控管件编号</th>
+                            <th class="ext-header hidden" colcode="ALLOW_MIN_BH" style="width: 75px">最小允许壁厚(mm)</th>
+                            <th class="ext-header hidden" colcode="TY_DATE" nowrap="">投用年限</th>
+                            <th class="ext-header hidden" colcode="JK_START_DATE" nowrap="">起始监控日期</th>
+                            <th class="ext-header hidden" colcode="JK_DAYS"><p style="width:60px">累计监控天数</p></th>
+                            <th class="ext-header hidden" colcode="LJBJ"><p style="width:60px">累计报警时间</p></th>
+                            <th class="ext-header hidden" colcode="WARN_DEALED"><p style="width:60px;">报警是否处理</p></th>
+                            <th style="width: 50px">详情</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr class="rowData hidden">
+                            <td colcode="SEQ">
+                                <p>1</p>
+                                <input type="hidden" colcode="LOC_ID">
+                            </td>
+                            <td colcode="RISK_LEVEL">
+                                <p class="risk-level"></p>
+                            </td>
+                            <td colcode="ORG_CODE__NAME"></td>
+                            <td colcode="ZZ_NAME"></td>
+                            <td style="text-align: left"><p class="text-ellipsis" style="width:150px;" colcode="LOC_NAME"></p></td>
+                            <td colcode="OMR_DATE"></td>
+                            <td colcode="MIN_BH"></td>
+                            <td colcode="FS_SPPED_AVG"></td>
+                            <td colcode="JB_RATE"></td>
+                            <td colcode="SYSM_YEARS"></td>
+                            <td colcode="LOC_STATE"></td>
+                            <td colcode="LOC_CODE" class="ext-header hidden"></td>
+                            <td colcode="ALLOW_MIN_BH" class="ext-header hidden"></td>
+                            <td colcode="TY_DATE" class="ext-header hidden"></td>
+                            <td colcode="JK_START_DATE" class="ext-header hidden"></td>
+                            <td colcode="JK_DAYS" class="ext-header hidden"></td>
+                            <td colcode="LJBJ" class="ext-header hidden"></td>
+                            <td colcode="WARN_DEALED" class="ext-header hidden"></td>
+                            <td><a href="javascript:;" class="detail-link">详情</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pageWrapper" style="position: relative;">
+                <ul class="pagination" id="page1">
+                    <li><a>←</a></li>
+                    <li><a>上一页</a></li>
+                    <li class="active" page="1"><a>1</a></li>
+                    <li page="2"><a>2</a></li>
+                    <li page="3"><a>3</a></li>
+                    <li page="4"><a>4</a></li>
+                    <li><a>...</a></li>
+                    <li page="7"><a>7</a></li>
+                    <li><a>下一页</a></li>
+                    <li><a>→</a></li>
+                </ul>
+                <div class="pageJump pageJump-sm">
+                    <span>跳转到</span>
+                    <input type="text" style="width:38px;outline: none;">
+                    <span>页</span>
+                    <button type="button" class="button">确定</button>
+                </div>
+            </div>
+        </div>
+        <div class="con_right">
+            <div class="right1">
+                <div class="right1_top">
+                    <p>1#管件(第二次)</p>
+                    <div class="right1_buttons">
+                        <div class="choose1 active">实物图</div>
+                        <div class="choose2">单线图</div>
+                    </div>
+                </div>
+                <div class="right1_content">
+                    <div class="tupian">
+                        <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=industrial%20pipe%20fitting%20in%20laboratory%20setting%2C%20metal%20pipes%20with%20connections%2C%20industrial%20environment%2C%20photorealistic" alt="实物图">
+                    </div>
+                    <div class="tupian1">
+                        <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=technical%20drawing%20of%20pipe%20fitting%2C%20single%20line%20diagram%2C%20industrial%20piping%20system%2C%20technical%20blueprint%20style" alt="单线图">
+                    </div>
+                </div>
+            </div>
+            <div class="right2">
+                <div class="right2_top">
+                    <h1>监控区域剖面图</h1>
+                </div>
+                <div class="right2_chart tupian2">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=industrial%20pipe%20cross%20section%20diagram%2C%20green%20segments%20indicating%20wall%20thickness%2C%20technical%20drawing%2C%20monitoring%20system%20interface" alt="监控区域剖面图">
+                </div>
+            </div>
+            <div class="right3">
+                <div class="right3_top">
+                    <div class="right3_top_1">
+                        <h1>监控区域最小壁厚值</h1>
+                    </div>
+                    <div class="right3_top_2">
+                    </div>
+                </div>
+                <div class="right3_chart">
+                    <div class="danwei">
+                        <p>壁厚/mm</p>
+                        <div class="bh_type_con"><a href="javascript:;" class="cur" bh_type="day">日线</a> | <a href="javascript:;" bh_type="week">周线</a> | <a href="javascript:;" bh_type="month">月线</a></div>
+                    </div>
+                    <div id="zhexian" style="width: 100%;height:200px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <table class="template">
+        <thead>
+            <tr>
+                <th style="width: 40px">序号</th>
+                <th style="width: 100px">是否报警及报警等级</th>
+                <th style="width: 80px">所属公司</th>
+                <th style="width: 100px">装置</th>
+                <th style="width: 150px">监控位置</th>
+                <th style="width: 120px">数据采集日期</th>
+                <th class="sort-header" style="width: 150px">
+                        <p colcode="MIN_BH">最小壁厚值(mm)</p>
+                        <div class="dir">
+                            <span class="icon sheng"></span>
+                            <span class="icon jiang"></span>
+                        </div>
+                    </th>
+                    <th class="sort-header" style="width: 150px">
+                        <p colcode="FS_SPPED_AVG">腐蚀速率(mm/Y)</p>
+                        <div class="dir">
+                            <span class="icon sheng"></span>
+                            <span class="icon jiang"></span>
+                        </div>
+                    </th>
+                    <th class="sort-header" style="width: 120px">
+                        <p colcode="JB_RATE">最大减薄率</p>
+                        <div class="dir">
+                            <span class="icon sheng"></span>
+                            <span class="icon jiang"></span>
+                        </div>
+                    </th>
+                <th style="width: 70px">剩余寿命(Y)</th>
+                <th style="width: 70px">工作状态</th>
+                <th class="ext-header hidden" colcode="LOC_CODE">监控管件编号</th>
+                <th class="ext-header hidden" colcode="ALLOW_MIN_BH" style="width: 75px">最小允许壁厚(mm)</th>
+                <th class="ext-header hidden" colcode="TY_DATE" nowrap="">投用年限</th>
+                <th class="ext-header hidden" colcode="JK_START_DATE" nowrap="">起始监控日期</th>
+                <th class="ext-header hidden" colcode="JK_DAYS"><p style="width:60px">累计监控天数</p></th>
+                <th class="ext-header hidden" colcode="LJBJ"><p style="width:60px">累计报警时间</p></th>
+                <th class="ext-header hidden" colcode="WARN_DEALED"><p style="width:60px;">报警是否处理</p></th>
+                <th style="width: 50px">详情</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="rowData hidden">
+                <td colcode="SEQ">
+                    <p>1</p>
+                    <input type="hidden" colcode="LOC_ID">
+                </td>
+                <td colcode="RISK_LEVEL">
+                    <p class="risk-level"></p>
+                </td>
+                <td colcode="ORG_CODE__NAME"></td>
+                <td colcode="ZZ_NAME"></td>
+                <td style="text-align: left"><p class="text-ellipsis" style="width:150px;" colcode="LOC_NAME"></p></td>
+                <td colcode="OMR_DATE"></td>
+                <td colcode="MIN_BH"></td>
+                <td colcode="FS_SPPED_AVG"></td>
+                <td colcode="JB_RATE"></td>
+                <td colcode="SYSM_YEARS"></td>
+                <td colcode="LOC_STATE"></td>
+                <td colcode="LOC_CODE" class="ext-header hidden"></td>
+                <td colcode="ALLOW_MIN_BH" class="ext-header hidden"></td>
+                <td colcode="TY_DATE" class="ext-header hidden"></td>
+                <td colcode="JK_START_DATE" class="ext-header hidden"></td>
+                <td colcode="JK_DAYS" class="ext-header hidden"></td>
+                <td colcode="LJBJ" class="ext-header hidden"></td>
+                <td colcode="WARN_DEALED" class="ext-header hidden"></td>
+                <td><a href="javascript:;" class="detail-link">详情</a></td>
+            </tr>
+        </tbody>
+    </table>
+    <input type="hidden" name="orgCode" id="orgCode" value="">
+    <input type="hidden" name="fdName" id="fdName" value="">
+    <form name="form1" method="post" action="" style="display:none">
+       <textarea name="params"></textarea>
+    </form>
+    <script type="text/javascript" src="script.js"></script>
+</body>
+</html>

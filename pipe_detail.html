@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天津因科鹰眼在线监控系统 - 详细信息</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* body样式使用style.css中的样式 */
+        
+        /* 顶部导航栏使用style.css中的样式 */
+        
+        /* 管件标签页 */
+        .pipe-tabs {
+            background-color: #f8f9fa;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+        }
+        
+        .pipe-tabs button {
+            background-color: #e9ecef;
+            border: 1px solid #dee2e6;
+            padding: 6px 12px;
+            margin-right: 5px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .pipe-tabs button.active {
+            background-color: #1a5276;
+            color: white;
+            border-color: #1a5276;
+        }
+        
+        .pipe-tabs .arrow {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        
+        /* 主容器 */
+        .main-container {
+            display: flex;
+            height: calc(100vh - 120px);
+            background: #f5f7fa;
+            overflow: hidden;
+            margin-top: 0;
+        }
+        
+        /* 左侧边栏 */
+        .sidebar {
+            width: 120px;
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a8d 100%);
+            color: white;
+            padding: 0;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .sidebar-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-left: 3px solid #3498db;
+            font-weight: 600;
+        }
+        
+        /* 右侧内容区 */
+        .content {
+            flex: 1;
+            padding: 20px;
+            background: #f5f7fa;
+            overflow-y: auto;
+        }
+        
+        /* 管件标签页 */
+        .pipe-tabs {
+            background: #fff;
+            padding: 10px 20px;
+            border-radius: 0;
+            margin-bottom: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+        }
+        
+        .pipe-tabs button {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 6px 12px;
+            margin-right: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .pipe-tabs button:hover {
+            background: #e3f2fd;
+            border-color: #bbdefb;
+        }
+        
+        .pipe-tabs button.active {
+            background: linear-gradient(135deg, #0056b3 0%, #007bff 100%);
+            color: white;
+            border-color: #007bff;
+            box-shadow: 0 2px 4px rgba(0,123,255,0.2);
+        }
+        
+        .pipe-tabs .arrow {
+            margin-left: 10px;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+        
+        .pipe-tabs .arrow:hover {
+            color: #007bff;
+        }
+        
+        /* 管道信息卡片 */
+        .pipe-info {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .info-card {
+            flex: 1;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            background-color: #fff;
+            transition: all 0.3s ease;
+        }
+        
+        .info-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+        
+        .info-card.lab {
+            border-left: 4px solid #3498db;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+        }
+        
+        .info-card.pipe {
+            border-left: 4px solid #27ae60;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e8f5e8 100%);
+        }
+        
+        .info-card.risk {
+            border-left: 4px solid #e74c3c;
+            background: linear-gradient(135deg, #f8f9fa 0%, #fce4e4 100%);
+        }
+        
+        .info-card h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .info-card p {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* 标签页 */
+        .content-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background: #fff;
+            border-radius: 10px;
+            padding: 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .content-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin: 0 5px;
+        }
+        
+        .content-tab:hover {
+            background: #f8f9fa;
+        }
+        
+        .content-tab.active {
+            background: linear-gradient(135deg, #0056b3 0%, #007bff 100%);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,123,255,0.2);
+        }
+        
+        /* 标签页内容 */
+        .tab-content {
+            display: block;
+        }
+        
+        .tab-pane {
+            display: none;
+        }
+        
+        .tab-pane.active {
+            display: block;
+        }
+        
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 1000px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            animation: modalFadeIn 0.3s ease;
+        }
+        
+        @keyframes modalFadeIn {
+            from {opacity: 0; transform: translateY(-20px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        
+        .modal-header {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            color: #333;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        /* 图表标签页 */
+        .chart-tabs {
+            display: flex;
+            margin-bottom: 15px;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        
+        .chart-tab {
+            padding: 6px 16px;
+            border: 1px solid #e9ecef;
+            background-color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .chart-tab:hover {
+            background: #e3f2fd;
+            border-color: #bbdefb;
+        }
+        
+        .chart-tab.active {
+            background: linear-gradient(135deg, #0056b3 0%, #007bff 100%);
+            color: white;
+            border-color: #007bff;
+            box-shadow: 0 2px 4px rgba(0,123,255,0.2);
+        }
+        
+        /* 图片容器 */
+        .images-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .image-item {
+            flex: 1;
+            text-align: center;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+        
+        .image-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            background: #e3f2fd;
+            border-color: #bbdefb;
+        }
+        
+        .image-item img {
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .image-item img:hover {
+            transform: scale(1.02);
+        }
+        
+        /* 按钮容器 */
+        .buttons-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .report-btn {
+            padding: 10px 20px;
+            border: 1px solid #3498db;
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            color: #3498db;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .report-btn:hover {
+            background: linear-gradient(135deg, #3498db 0%, #007bff 100%);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,123,255,0.2);
+        }
+        
+        /* 报告模态框样式 */
+        .report-content {
+            padding: 30px;
+        }
+        
+        .report-section {
+            margin-bottom: 30px;
+        }
+        
+        .report-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 4px solid #007bff;
+        }
+        
+        .report-row {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 15px;
+            transition: all 0.2s ease;
+        }
+        
+        .report-row:hover {
+            background: #f8f9fa;
+            padding-left: 10px;
+            border-radius: 4px;
+        }
+        
+        .report-row:last-child {
+            border-bottom: none;
+        }
+        
+        .report-cell {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: #333;
+        }
+        
+        .report-table {
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .report-table .report-row {
+            margin-bottom: 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .report-table .report-row:nth-child(even) {
+            background-color: #fafbfc;
+        }
+        
+        .report-table .report-row:hover {
+            background: #e3f2fd;
+        }
+        
+        .report-table .report-cell {
+            padding: 12px 15px;
+            font-weight: 500;
+        }
+        
+        .report-images {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .report-image-item {
+            flex: 1;
+            text-align: center;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+        
+        .report-image-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            background: #e3f2fd;
+            border-color: #bbdefb;
+        }
+        
+        .report-image-item img {
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .report-image-item img:hover {
+            transform: scale(1.02);
+        }
+        
+        .report-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+        }
+        
+        /* 预警等级样式 */
+        .warning-level {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .warning-level:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        /* 剖面图区域 */
+        .profile-section {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .profile-chart {
+            flex: 2;
+        }
+        
+        .profile-chart h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        
+        .profile-chart h3::before {
+            content: "";
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: #007bff;
+            border-radius: 2px;
+            margin-right: 12px;
+        }
+        
+        .chart-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .chart-footer {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #666;
+            padding-top: 10px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        /* 信息表格 */
+        .info-table {
+            flex: 1;
+        }
+        
+        .info-table h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        
+        .info-table h3::before {
+            content: "";
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: #007bff;
+            border-radius: 2px;
+            margin-right: 12px;
+        }
+        
+        .table-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .table-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.2s ease;
+        }
+        
+        .table-row:hover {
+            background: #f8f9fa;
+            padding-left: 10px;
+            border-radius: 4px;
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+        
+        .table-label {
+            font-size: 13px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .table-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .table-value.highlight {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            padding: 4px 10px;
+            border-radius: 6px;
+            color: #155724;
+            box-shadow: 0 1px 3px rgba(21, 87, 36, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div class="header">
+        <div class="logo">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='45' viewBox='0 0 120 45'%3E%3Cdefs%3E%3ClinearGradient id='grad1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%230056b3;stop-opacity:1'/%3E%3Cstop offset='100%25' style='stop-color:%23007bff;stop-opacity:1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='0' y='0' width='120' height='45' rx='8' fill='url(%23grad1)'/%3E%3Ctext x='15' y='30' font-family='%22Segoe%20UI%22,%20Arial,%20sans-serif' font-size='22' font-weight='700' fill='white'%3EINCOtech%3C/text%3E%3C/svg%3E" alt="INCOtech Logo">
+        </div>
+        <div class="biaoti">
+            <p>天津因科鹰眼在线监控系统</p>
+        </div>
+        <div class="search">
+            <input type="text" name="searchKeyword" id="searchKeyword" placeholder="请输入关键词" value="">
+            <button id="searchBtn">检索</button>
+        </div>
+    </div>
+    
+    <!-- 管件标签页 -->
+    <div class="pipe-tabs">
+        <button class="active">1#管件</button>
+        <button>2#管件</button>
+        <button>3#管件</button>
+        <button>常压塔T-102至...</button>
+        <button>TJSH-002点位</button>
+        <button>常压塔T-102至...</button>
+        <button>常压塔T-102至...</button>
+        <button>减顶空冷EC-107...</button>
+        <span class="arrow">›</span>
+    </div>
+    
+    <!-- 主容器 -->
+    <div class="main-container">
+        <!-- 左侧边栏 -->
+        <div class="sidebar">
+            <div class="sidebar-item" id="backToHome">返回首页</div>
+            <div class="sidebar-item active">详细信息</div>
+            <div class="sidebar-item">监控记录</div>
+            <div class="sidebar-item">报警记录</div>
+            <div class="sidebar-item">更换记录</div>
+        </div>
+        
+        <!-- 右侧内容区 -->
+        <div class="content">
+            <!-- 管道信息卡片 -->
+            <div class="pipe-info">
+                <div class="info-card lab">
+                    <h3>研发部山东实验室</h3>
+                    <p>装置：王水实验管#1</p>
+                </div>
+                <div class="info-card pipe">
+                    <h3>1#管件</h3>
+                    <p>监控位置编码：LAB01</p>
+                </div>
+                <div class="info-card risk">
+                    <h3>三级</h3>
+                    <p>当前风险等级</p>
+                </div>
+            </div>
+            
+            <!-- 内容标签页 -->
+            <div class="content-tabs">
+                <div class="content-tab active">剖面图</div>
+                <div class="content-tab">最小壁厚值变化趋势</div>
+                <div class="content-tab">台账信息</div>
+            </div>
+            
+            <!-- 标签页内容 -->
+            <div class="tab-content">
+                <!-- 剖面图内容 -->
+                <div id="profileTab" class="tab-pane active">
+                    <div class="profile-section">
+                        <!-- 左侧剖面图 -->
+                        <div class="profile-chart">
+                            <h3>监控区域壁厚变化剖面图</h3>
+                            <div class="chart-container">
+                                <div id="wallThicknessChart" style="width: 100%; height: 300px;"></div>
+                                <div class="chart-footer">
+                                    <p>时间：2026-02-18 15:00:00</p>
+                                    <p>区域面积：40×40平方毫米</p>
+                                    <p>测量点数：400点</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 右侧信息表格 -->
+                        <div class="info-table">
+                            <h3>信息表格</h3>
+                            <div class="table-container">
+                                <div class="table-row">
+                                    <span class="table-label">起始监控时间</span>
+                                    <span class="table-value">2026-01-19</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">最新采集数据时间</span>
+                                    <span class="table-value">2026-05-19</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">监控区域最小壁厚值（mm）</span>
+                                    <span class="table-value highlight">5.84</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">最大减薄率（%）</span>
+                                    <span class="table-value">12.89%</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">腐蚀占比 (%)</span>
+                                    <span class="table-value">22.50%</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">工作状态</span>
+                                    <span class="table-value">正常</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">缺陷尺寸</span>
+                                    <span class="table-value">长：24.0,宽：15.0,高：0.86</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">缺陷体积</span>
+                                    <span class="table-value">5.25mm³</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 最小壁厚值变化趋势内容 -->
+                <div id="thicknessTrendTab" class="tab-pane">
+                    <div class="profile-section">
+                        <!-- 左侧趋势图 -->
+                        <div class="profile-chart">
+                            <h3>监控区域最小壁厚值</h3>
+                            <div class="chart-container">
+                                <div class="chart-tabs">
+                                    <button class="chart-tab active">日线</button>
+                                    <button class="chart-tab">周线</button>
+                                    <button class="chart-tab">月线</button>
+                                </div>
+                                <div id="thicknessTrendChart" style="width: 100%; height: 300px;"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- 右侧信息表格 -->
+                        <div class="info-table">
+                            <h3>信息表格</h3>
+                            <div class="table-container">
+                                <div class="table-row">
+                                    <span class="table-label">起始监控时间</span>
+                                    <span class="table-value">2026-01-19</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">最新采集数据时间</span>
+                                    <span class="table-value">2026-05-19</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">设计壁厚(mm)</span>
+                                    <span class="table-value">6.7</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">最小壁厚值(mm)</span>
+                                    <span class="table-value highlight">5.84</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">监控起始壁厚(mm)</span>
+                                    <span class="table-value">6.56</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">管件壁厚(mm)</span>
+                                    <span class="table-value">4.7</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">腐蚀速率(mm/Y)</span>
+                                    <span class="table-value">2.23</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">最小允许壁厚(mm)</span>
+                                    <span class="table-value">2.0</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">剩余寿命(Y)</span>
+                                    <span class="table-value">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 台账信息内容 -->
+                <div id="ledgerTab" class="tab-pane">
+                    <div class="profile-section">
+                        <!-- 左侧图纸资料 -->
+                        <div class="profile-chart">
+                            <h3>图纸资料</h3>
+                            <div class="chart-container">
+                                <div class="images-container">
+                                    <div class="image-item">
+                                        <img src="https://picsum.photos/seed/pipe1/600/400" alt="实物图" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">
+                                        <p style="text-align: center; margin-top: 10px; font-size: 12px;">实物图</p>
+                                    </div>
+                                    <div class="image-item">
+                                        <img src="https://picsum.photos/seed/pipe2/600/400" alt="单线图" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">
+                                        <p style="text-align: center; margin-top: 10px; font-size: 12px;">单线图</p>
+                                    </div>
+                                </div>
+                                <div class="buttons-container">
+                                    <button class="report-btn">打印报告</button>
+                                    <button class="report-btn" id="viewReportBtn">查看报告</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 右侧信息表格 -->
+                        <div class="info-table">
+                            <h3>管件基础信息</h3>
+                            <div class="table-container">
+                                <div class="table-row">
+                                    <span class="table-label">管道名称/设备名称</span>
+                                    <span class="table-value">腐蚀实验1#管件</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">管道编号/设备位号</span>
+                                    <span class="table-value">1#管件</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">管件规格</span>
+                                    <span class="table-value">DN250</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">管件类型</span>
+                                    <span class="table-value">--</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">原始设计壁厚(mm)</span>
+                                    <span class="table-value">6.7</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">最小允许壁厚(mm)</span>
+                                    <span class="table-value">2</span>
+                                </div>
+                            </div>
+                            
+                            <h3 style="margin-top: 20px;">工艺参数</h3>
+                            <div class="table-container">
+                                <div class="table-row">
+                                    <span class="table-label">材质</span>
+                                    <span class="table-value">20#</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">工作介质</span>
+                                    <span class="table-value">--</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">工作温度(℃)</span>
+                                    <span class="table-value">--</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">工作压力(MPa)</span>
+                                    <span class="table-value">--</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">最高工作温度(℃)</span>
+                                    <span class="table-value">--</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">最高工作压力(MPa)</span>
+                                    <span class="table-value">--</span>
+                                </div>
+                                <div class="table-row">
+                                    <span class="table-label">管线投用时间</span>
+                                    <span class="table-value">2026-01-19</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 监控报告模态框 -->
+    <div id="reportModal" class="modal">
+        <div class="modal-content" style="width: 90%; max-width: 1000px;">
+            <div class="modal-header">
+                <h2>天津因科在线腐蚀监控报告</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="report-content">
+                <div class="report-section">
+                    <div class="report-header">
+                        <div class="report-row">
+                            <div class="report-cell">监控单位</div>
+                            <div class="report-cell" style="flex: 3;">中国石油大学</div>
+                        </div>
+                    </div>
+                    
+                    <h3>监控管件信息</h3>
+                    <div class="report-table">
+                        <div class="report-row">
+                            <div class="report-cell">监控位置</div>
+                            <div class="report-cell">山东实验室-王水实验管件1#-1#管件</div>
+                            <div class="report-cell">管道名称/设备名称</div>
+                            <div class="report-cell">腐蚀实验1#管件</div>
+                        </div>
+                        <div class="report-row">
+                            <div class="report-cell">监控位置编码</div>
+                            <div class="report-cell">LAB01</div>
+                            <div class="report-cell">管道编号/设备位号</div>
+                            <div class="report-cell">1#管件</div>
+                        </div>
+                        <div class="report-row">
+                            <div class="report-cell">材质</div>
+                            <div class="report-cell">20#</div>
+                            <div class="report-cell">原始设计壁厚</div>
+                            <div class="report-cell">6.7mm</div>
+                        </div>
+                        <div class="report-row">
+                            <div class="report-cell">工作介质</div>
+                            <div class="report-cell">--</div>
+                            <div class="report-cell">安装时间</div>
+                            <div class="report-cell">2026-01-19</div>
+                        </div>
+                        <div class="report-row">
+                            <div class="report-cell">运行温度</div>
+                            <div class="report-cell">--</div>
+                            <div class="report-cell">运行压力</div>
+                            <div class="report-cell">--</div>
+                        </div>
+                    </div>
+                    
+                    <h3>监控位置信息</h3>
+                    <div class="report-images">
+                        <div class="report-image-item">
+                            <img src="https://picsum.photos/seed/pipe1/600/400" alt="实物图" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">
+                            <p style="text-align: center; margin-top: 10px; font-size: 12px;">实物图</p>
+                        </div>
+                        <div class="report-image-item">
+                            <img src="https://picsum.photos/seed/pipe2/600/400" alt="单线图" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">
+                            <p style="text-align: center; margin-top: 10px; font-size: 12px;">单线图</p>
+                        </div>
+                    </div>
+                    
+                    <h3>监控管件信息</h3>
+                    <div class="report-table">
+                        <div class="report-row">
+                            <div class="report-cell">起始监控日期</div>
+                            <div class="report-cell">2026-01-19</div>
+                            <div class="report-cell">最新采样日期</div>
+                            <div class="report-cell">2026-05-19</div>
+                        </div>
+                        <div class="report-row">
+                            <div class="report-cell">最小壁厚值</div>
+                            <div class="report-cell">5.84mm</div>
+                            <div class="report-cell">最小壁厚处腐蚀速率</div>
+                            <div class="report-cell">2.23mm/Y</div>
+                        </div>
+                        <div class="report-row">
+                            <div class="report-cell">最大减薄率</div>
+                            <div class="report-cell">12.89%</div>
+                            <div class="report-cell">剩余寿命预测</div>
+                            <div class="report-cell">2028-03-04</div>
+                        </div>
+                        <div class="report-row">
+                            <div class="report-cell">是否报警</div>
+                            <div class="report-cell">
+                                <span class="warning-level">三级</span> 已报警
+                            </div>
+                            <div class="report-cell"></div>
+                            <div class="report-cell"></div>
+                        </div>
+                        <div class="report-row">
+                            <div class="report-cell">重点问题说明</div>
+                            <div class="report-cell" style="flex: 3;">腐蚀速率为2.23mm/Y，判定为三级报警，建议持续重点监控。</div>
+                            <div class="report-cell"></div>
+                            <div class="report-cell"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="report-footer">
+                        <div class="report-row">
+                            <div class="report-cell">负责人员</div>
+                            <div class="report-cell">--</div>
+                            <div class="report-cell">打印报告时间</div>
+                            <div class="report-cell">2026-04-23</div>
+                        </div>
+                        <div class="report-row">
+                            <div class="report-cell">报告备注</div>
+                            <div class="report-cell" style="flex: 3;">--</div>
+                            <div class="report-cell"></div>
+                            <div class="report-cell"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 标签页切换
+        const contentTabs = document.querySelectorAll('.content-tab');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+        
+        contentTabs.forEach((tab, index) => {
+            tab.addEventListener('click', function() {
+                // 切换标签页
+                contentTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 切换内容
+                tabPanes.forEach(pane => pane.classList.remove('active'));
+                tabPanes[index].classList.add('active');
+                
+                // 如果切换到最小壁厚值变化趋势标签页，初始化图表
+                if (index === 1) {
+                    initThicknessTrendChart();
+                }
+            });
+        });
+        
+        // 管件标签页切换
+        const pipeTabs = document.querySelectorAll('.pipe-tabs button');
+        pipeTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                pipeTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // 侧边栏切换
+        const sidebarItems = document.querySelectorAll('.sidebar-item');
+        sidebarItems.forEach(item => {
+            item.addEventListener('click', function() {
+                // 切换到返回首页
+                if (this.textContent === '返回首页') {
+                    // 获取URL参数
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const keyword = urlParams.get('keyword') || '';
+                    const page = urlParams.get('page') || '1';
+                    const sort = urlParams.get('sort') || '';
+                    const dir = urlParams.get('dir') || '';
+                    
+                    // 构建返回URL
+                    let returnUrl = 'index1.html';
+                    let params = [];
+                    
+                    if (keyword) {
+                        params.push(`keyword=${encodeURIComponent(keyword)}`);
+                    }
+                    if (page) {
+                        params.push(`page=${page}`);
+                    }
+                    if (sort) {
+                        params.push(`sort=${sort}`);
+                    }
+                    if (dir) {
+                        params.push(`dir=${dir}`);
+                    }
+                    
+                    if (params.length > 0) {
+                        returnUrl += '?' + params.join('&');
+                    }
+                    
+                    // 跳转到二级页面
+                    window.location.href = returnUrl;
+                }
+                // 切换到详细信息页面
+                else if (this.textContent === '详细信息') {
+                    window.location.href = 'pipe_detail.html';
+                }
+                // 切换到监控记录页面
+                else if (this.textContent === '监控记录') {
+                    window.location.href = 'pipe_info.html';
+                }
+                // 切换到报警记录页面
+                else if (this.textContent === '报警记录') {
+                    window.location.href = 'pipe_alarm.html';
+                }
+                // 切换到更换记录页面
+                else if (this.textContent === '更换记录') {
+                    window.location.href = 'pipe_replace.html';
+                }
+            });
+        });
+        
+        // 初始化监控区域壁厚变化剖面图
+        function initWallThicknessChart() {
+            const wallThicknessChart = echarts.init(document.getElementById('wallThicknessChart'));
+            
+            // 模拟数据 - 根据原表格数据生成
+            const data = [];
+            const values = [
+                [0.06, 0.0], [0.36, 0.0], [0.75, 0.0], [1.09, 0.0], [1.45, 0.0], [1.82, 0.0],
+                [2.24, 0.0], [2.64, 0.0], [2.99, 0.0], [3.34, 0.0], [3.71, 0.0], [4.07, 0.0],
+                [4.46, 0.0], [4.80, 5.9], [5.20, 15.9], [5.58, 22.5], [5.84, 26.3], [6.32, 20.8],
+                [6.77, 38.5]
+            ];
+            
+            let index = 0;
+            for (let i = 0; i < 6; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if (index < values.length) {
+                        // 使用腐蚀百分比作为热力值
+                        data.push([i, j, values[index][1] / 100]);
+                        index++;
+                    }
+                }
+            }
+            
+            const option = {
+                tooltip: {
+                    position: 'top',
+                    formatter: function(params) {
+                        const value = values[params.value[0] * 3 + params.value[1]];
+                        return `壁厚: ${value[0]}mm<br>腐蚀率: ${value[1]}%`;
+                    }
+                },
+                grid: {
+                    height: '60%',
+                    top: '10%'
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['1', '2', '3', '4', '5', '6'],
+                    splitArea: {
+                        show: true
+                    }
+                },
+                yAxis: {
+                    type: 'category',
+                    data: ['1', '2', '3'],
+                    splitArea: {
+                        show: true
+                    }
+                },
+                visualMap: {
+                    min: 0,
+                    max: 0.5,
+                    calculable: true,
+                    orient: 'horizontal',
+                    left: 'center',
+                    bottom: '5%',
+                    inRange: {
+                        color: ['#27ae60', '#f1c40f', '#e74c3c']
+                    }
+                },
+                series: [{
+                    name: '腐蚀程度',
+                    type: 'heatmap',
+                    data: data,
+                    label: {
+                        show: false
+                    },
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }]
+            };
+            
+            wallThicknessChart.setOption(option);
+        }
+        
+        // 初始化最小壁厚值变化趋势图表
+        function initThicknessTrendChart() {
+            const thicknessTrendChart = echarts.init(document.getElementById('thicknessTrendChart'));
+            
+            // 模拟数据 - 日线数据
+            const dates = [
+                '2026-01-19', '2026-02-02', '2026-02-16', '2026-03-01', '2026-03-14',
+                '2026-03-27', '2026-04-09', '2026-04-22', '2026-05-05', '2026-05-19'
+            ];
+            const values = [6.56, 6.52, 6.48, 6.43, 6.38, 6.32, 6.25, 6.18, 6.05, 5.84];
+            
+            const option = {
+                tooltip: {
+                    trigger: 'axis'
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: dates
+                },
+                yAxis: {
+                    type: 'value',
+                    min: 5,
+                    max: 7
+                },
+                series: [{
+                    name: '壁厚值(mm)',
+                    type: 'line',
+                    data: values,
+                    smooth: true,
+                    lineStyle: {
+                        color: '#3498db',
+                        width: 2
+                    },
+                    areaStyle: {
+                        color: {
+                            type: 'linear',
+                            x: 0,
+                            y: 0,
+                            x2: 0,
+                            y2: 1,
+                            colorStops: [{
+                                offset: 0, color: 'rgba(52, 152, 219, 0.3)' // 上
+                            }, {
+                                offset: 1, color: 'rgba(52, 152, 219, 0.1)' // 下
+                            }]
+                        }
+                    },
+                    itemStyle: {
+                        color: '#3498db'
+                    }
+                }]
+            };
+            
+            thicknessTrendChart.setOption(option);
+        }
+        
+        // 图表标签页切换
+        const chartTabs = document.querySelectorAll('.chart-tab');
+        chartTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                chartTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                // 这里可以根据选择的标签页（日线、周线、月线）更新图表数据
+            });
+        });
+        
+        // 查看报告按钮点击事件
+        const viewReportBtn = document.getElementById('viewReportBtn');
+        const reportModal = document.getElementById('reportModal');
+        const reportCloseBtn = reportModal.querySelector('.close');
+        
+        if (viewReportBtn) {
+            viewReportBtn.addEventListener('click', function() {
+                reportModal.style.display = 'block';
+            });
+        }
+        
+        if (reportCloseBtn) {
+            reportCloseBtn.addEventListener('click', function() {
+                reportModal.style.display = 'none';
+            });
+        }
+        
+        // 点击模态框外部关闭模态框
+        window.addEventListener('click', function(event) {
+            if (event.target === reportModal) {
+                reportModal.style.display = 'none';
+            }
+        });
+        
+        // 返回首页按钮点击事件
+        const backToHomeBtn = document.getElementById('backToHome');
+        if (backToHomeBtn) {
+            backToHomeBtn.addEventListener('click', function() {
+                // 获取URL参数
+                const urlParams = new URLSearchParams(window.location.search);
+                const keyword = urlParams.get('keyword') || '';
+                const page = urlParams.get('page') || '1';
+                const sort = urlParams.get('sort') || '';
+                const dir = urlParams.get('dir') || '';
+                
+                // 构建返回URL
+                let returnUrl = 'index1.html';
+                let params = [];
+                
+                if (keyword) {
+                    params.push(`keyword=${encodeURIComponent(keyword)}`);
+                }
+                if (page) {
+                    params.push(`page=${page}`);
+                }
+                if (sort) {
+                    params.push(`sort=${sort}`);
+                }
+                if (dir) {
+                    params.push(`dir=${dir}`);
+                }
+                
+                if (params.length > 0) {
+                    returnUrl += '?' + params.join('&');
+                }
+                
+                // 跳转到二级页面
+                window.location.href = returnUrl;
+            });
+        }
+        
+        // 当页面加载完成后初始化图表
+        window.addEventListener('load', function() {
+            initWallThicknessChart();
+        });
+    </script>
+</body>
+</html>

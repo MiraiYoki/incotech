@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天津因科鹰眼在线监控系统 - 更换记录</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        /* 顶部导航栏使用style.css中的样式 */
+        
+        /* 管件标签页 */
+        .pipe-tabs {
+            background-color: #f8f9fa;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+        }
+        
+        .pipe-tabs button {
+            background-color: #e9ecef;
+            border: 1px solid #dee2e6;
+            padding: 6px 12px;
+            margin-right: 5px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .pipe-tabs button.active {
+            background-color: #1a5276;
+            color: white;
+            border-color: #1a5276;
+        }
+        
+        .pipe-tabs .arrow {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        
+        /* 主容器 */
+        .main-container {
+            display: flex;
+            height: calc(100vh - 120px);
+            background: #f5f7fa;
+            overflow: hidden;
+            margin-top: 0;
+        }
+        
+        /* 左侧边栏 */
+        .sidebar {
+            width: 120px;
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a8d 100%);
+            color: white;
+            padding: 0;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .sidebar-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-left: 3px solid #3498db;
+            font-weight: 600;
+        }
+        
+        /* 右侧内容区 */
+        .content {
+            flex: 1;
+            padding: 20px;
+            background: #f5f7fa;
+            overflow-y: auto;
+        }
+        
+        /* 管件标签页 */
+        .pipe-tabs {
+            background: #fff;
+            padding: 10px 20px;
+            border-radius: 0;
+            margin-bottom: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+        }
+        
+        .pipe-tabs button {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 6px 12px;
+            margin-right: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .pipe-tabs button:hover {
+            background: #e3f2fd;
+            border-color: #bbdefb;
+        }
+        
+        .pipe-tabs button.active {
+            background: linear-gradient(135deg, #0056b3 0%, #007bff 100%);
+            color: white;
+            border-color: #007bff;
+            box-shadow: 0 2px 4px rgba(0,123,255,0.2);
+        }
+        
+        .pipe-tabs .arrow {
+            margin-left: 10px;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+        
+        .pipe-tabs .arrow:hover {
+            color: #007bff;
+        }
+        
+        /* 监控列表标题 */
+        .content h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        
+        .content h2::before {
+            content: "";
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: #007bff;
+            border-radius: 2px;
+            margin-right: 12px;
+        }
+        
+        /* 更换记录表格样式 */
+        .replace-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .replace-table thead {
+            background: #4a8bc2;
+            color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .replace-table th {
+            padding: 12px 10px;
+            text-align: center;
+            font-weight: 600;
+            white-space: nowrap;
+            border-right: 1px solid rgba(255,255,255,0.1);
+            border-bottom: none;
+            transition: all 0.3s ease;
+        }
+        
+        .replace-table th:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .replace-table th:last-child {
+            border-right: none;
+        }
+        
+        .replace-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+            height: 40px;
+            cursor: pointer;
+        }
+        
+        .replace-table tbody tr:hover {
+            background: #e3f2fd;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,123,255,0.15);
+        }
+        
+        .replace-table tbody tr:nth-child(odd) {
+            background: #fafbfc;
+        }
+        
+        .replace-table tbody tr:nth-child(even) {
+            background: #f5f7fa;
+        }
+        
+        .replace-table tbody tr:nth-child(even):hover {
+            background: #e3f2fd;
+        }
+        
+        .replace-table td {
+            padding: 10px;
+            text-align: center;
+            border-right: 1px solid #f0f0f0;
+            vertical-align: middle;
+            transition: all 0.2s ease;
+            color: #333;
+            white-space: nowrap;
+        }
+        
+        .replace-table td:last-child {
+            border-right: none;
+        }
+        
+        /* 照片预览样式 */
+        .photo-preview {
+            width: 60px;
+            height: 40px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 3px;
+            color: #999;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div class="header">
+        <div class="logo">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='45' viewBox='0 0 120 45'%3E%3Cdefs%3E%3ClinearGradient id='grad1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%230056b3;stop-opacity:1'/%3E%3Cstop offset='100%25' style='stop-color:%23007bff;stop-opacity:1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='0' y='0' width='120' height='45' rx='8' fill='url(%23grad1)'/%3E%3Ctext x='15' y='30' font-family='%22Segoe%20UI%22,%20Arial,%20sans-serif' font-size='22' font-weight='700' fill='white'%3EINCOtech%3C/text%3E%3C/svg%3E" alt="INCOtech Logo">
+        </div>
+        <div class="biaoti">
+            <p>天津因科鹰眼在线监控系统</p>
+        </div>
+        <div class="search">
+            <input type="text" name="searchKeyword" id="searchKeyword" placeholder="请输入关键词" value="">
+            <button id="searchBtn">检索</button>
+        </div>
+    </div>
+    
+    <!-- 管件标签页 -->
+    <div class="pipe-tabs">
+        <button class="active">1#管件</button>
+        <button>2#管件</button>
+        <button>3#管件</button>
+        <button>常压塔T-102至...</button>
+        <button>TJSH-002点位</button>
+        <button>常压塔T-102至...</button>
+        <button>常压塔T-102至...</button>
+        <button>减顶空冷EC-107...</button>
+        <span class="arrow">›</span>
+    </div>
+    
+    <!-- 主容器 -->
+    <div class="main-container">
+        <!-- 左侧边栏 -->
+        <div class="sidebar">
+            <div class="sidebar-item" id="backToHome">返回首页</div>
+            <div class="sidebar-item">详细信息</div>
+            <div class="sidebar-item">监控记录</div>
+            <div class="sidebar-item">报警记录</div>
+            <div class="sidebar-item active">更换记录</div>
+        </div>
+        
+        <!-- 右侧内容区 -->
+        <div class="content">
+            <h2>更换记录列表</h2>
+            
+            <div class="table-container">
+                <table class="replace-table">
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>监控位置</th>
+                            <th>管件编号</th>
+                            <th>管道名称/设备名称</th>
+                            <th>更换日期</th>
+                            <th>更换说明</th>
+                            <th>更换后管件壁厚值(mm)</th>
+                            <th>现场照片</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- 空表格，根据截图显示 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 管件标签页切换
+        const pipeTabs = document.querySelectorAll('.pipe-tabs button');
+        pipeTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                pipeTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // 侧边栏切换
+        const sidebarItems = document.querySelectorAll('.sidebar-item');
+        sidebarItems.forEach(item => {
+            item.addEventListener('click', function() {
+                // 切换到返回首页
+                if (this.textContent === '返回首页') {
+                    // 获取URL参数
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const keyword = urlParams.get('keyword') || '';
+                    const page = urlParams.get('page') || '1';
+                    const sort = urlParams.get('sort') || '';
+                    const dir = urlParams.get('dir') || '';
+                    
+                    // 构建返回URL
+                    let returnUrl = 'index1.html';
+                    let params = [];
+                    
+                    if (keyword) {
+                        params.push(`keyword=${encodeURIComponent(keyword)}`);
+                    }
+                    if (page) {
+                        params.push(`page=${page}`);
+                    }
+                    if (sort) {
+                        params.push(`sort=${sort}`);
+                    }
+                    if (dir) {
+                        params.push(`dir=${dir}`);
+                    }
+                    
+                    if (params.length > 0) {
+                        returnUrl += '?' + params.join('&');
+                    }
+                    
+                    // 跳转到二级页面
+                    window.location.href = returnUrl;
+                }
+                // 切换到详细信息页面
+                else if (this.textContent === '详细信息') {
+                    window.location.href = 'pipe_detail.html';
+                }
+                // 切换到监控记录页面
+                else if (this.textContent === '监控记录') {
+                    window.location.href = 'pipe_info.html';
+                }
+                // 切换到报警记录页面
+                else if (this.textContent === '报警记录') {
+                    window.location.href = 'pipe_alarm.html';
+                }
+                // 切换到更换记录页面
+                else if (this.textContent === '更换记录') {
+                    window.location.href = 'pipe_replace.html';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
